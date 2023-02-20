@@ -30,10 +30,19 @@ public class Program
         {
             if (Login)
             {
+                var name = string.Empty;
                 var login = string.Empty;
                 var password = string.Empty;
 
                 console.WriteLine($"***** Credenciais do CL9 Backup *****");
+
+                while (string.IsNullOrEmpty(name))
+                {
+                    name = Prompt.GetString("Nome:");
+
+                    if (string.IsNullOrEmpty(name))
+                        console.WriteLine($"O campo Nome é obrigatório.");
+                }
 
                 while (string.IsNullOrEmpty(login))
                 {
