@@ -5,5 +5,6 @@ namespace Cl9Backup.CLI.Domain.Persistence
     public interface IParametroRepository : IRepository<Parametro>
     {
         bool IsConfigured();
+        int ClearCollection();
     }
 }

@@ -14,18 +14,20 @@ namespace Cl9Backup.CLI
             _parametroRepository = parametroRepository;
         }
 
-        [Option("-c|--config", CommandOptionType.NoValue, Description = "Realiza as configurações necessárias para execuções de Backup/Restore", ShowInHelpText = true)]
+        [Option("-c|--config", CommandOptionType.NoValue, Description = "Realiza as configurações necessárias para execuções de Backup/Restore. Serve também como \"reset\" caso precise atualizar as configuraçoes", ShowInHelpText = true)]
         public bool Config { get; set; }
 
         public Task<int> OnExecute(CommandLineApplication app, IConsole console)
         {
-            if (!_parametroRepository.IsConfigured() || Config)
+            var isConfigured = _parametroRepository.IsConfigured();
+
+            if (!isConfigured || Config)
             {
                 var apiHost = string.Empty;
                 var login = string.Empty;
                 var senha = string.Empty;
 
-                console.WriteTitle("Configurar no CL9 Backup");
+                console.WriteTitle("Configuração do CL9 Backup");
 
                 while (string.IsNullOrEmpty(apiHost))
                 {
@@ -53,7 +55,13 @@ namespace Cl9Backup.CLI
                         console.WriteLine($"O campo Senha é obrigatório.");
                 }
 
-                console.WriteLine($"Armazenando configurações de CL9 Backup...");
+                if (isConfigured)
+                {
+                    console.WriteLine("Limpando parâmetros antigos...");
+                    _parametroRepository.ClearCollection();
+                }
+
+                console.WriteLine($"Armazenando {(isConfigured ? "novas " : "")}configurações no CL9 Backup...");
 
                 _parametroRepository.Add(new Parametro() { Nome = "API_HOST", Valor = apiHost });
                 _parametroRepository.Add(new Parametro() { Nome = "LOGIN", Valor = login });
