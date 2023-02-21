@@ -1,5 +1,6 @@
 ﻿using Cl9Backup.CLI.Domain.Entities;
 using Cl9Backup.CLI.Domain.Persistence;
+using Cl9Backup.CLI.Infrastructure.Api;
 using McMaster.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Configuration;
 
@@ -11,10 +12,13 @@ namespace Cl9Backup.CLI
     {
         private readonly IConfiguration _configuration;
         private readonly IParametroRepository _parametroRepository;
-        public CliCommands(IConfiguration configuration, IParametroRepository parametroRepository)
+        private readonly Cl9BackupApiClient _apiClient;
+
+        public CliCommands(IConfiguration configuration, IParametroRepository parametroRepository, Cl9BackupApiClient apiClient)
         {
             _configuration = configuration;
             _parametroRepository = parametroRepository;
+            _apiClient = apiClient;
         }
 
         [Option("-c|--config", CommandOptionType.NoValue, Description = "Realiza as configurações necessárias para execuções de Backup/Restore. Serve também como \"reset\" caso precise atualizar as configuraçoes", ShowInHelpText = true)]
@@ -32,7 +36,7 @@ namespace Cl9Backup.CLI
         [Option("-dv|--device", CommandOptionType.SingleValue, Description = "Nome do dispositivo conectado", ShowInHelpText = true)]
         public string? Device { get; set; }
 
-        public Task<int> OnExecute(CommandLineApplication app, IConsole console)
+        public async Task<int> OnExecute(CommandLineApplication app, IConsole console)
         {
             var isConfigured = _parametroRepository.IsConfigured();
 
@@ -46,7 +50,7 @@ namespace Cl9Backup.CLI
 
                 while (string.IsNullOrEmpty(apiHost))
                 {
-                    apiHost = Prompt.GetString("Api HOST:", _configuration["DefaultApiHost"]);
+                    apiHost = Prompt.GetString("Api HOST:", _configuration["ApiHost"]);
 
                     if (string.IsNullOrEmpty(apiHost))
                         console.WriteLine($"O campo Api HOST é obrigatório.");
@@ -105,7 +109,7 @@ namespace Cl9Backup.CLI
 
                 console.WriteLine($"Configurações persitidas com sucesso!");
 
-                return Task.FromResult(Constants.OK);
+                return Constants.OK;
             }
 
             if (Backup)
@@ -139,13 +143,33 @@ namespace Cl9Backup.CLI
                         console.WriteLine($"O campo Dispositivo é obrigatório.");
                 }
 
-                // TODO: Autenticar na API para obtenção da SessionKey.
-                // TODO: Chamar endpoint GetProfileAndHash para recuperar valores de Destination, Source e Device.
+                var userNameParam = _parametroRepository.GetByName("LOGIN");
+                var passwordParam = _parametroRepository.GetByName("PASSWORD");
 
-                console.WriteLine($"Executando backup do bucket \"{Destination}\" da fonte \"{Source}\" através do dispositivo \"{Device}\"...");
+                var loginResult = await _apiClient.Login(userNameParam.Valor, passwordParam.Valor);
+
+                if (loginResult == null)
+                {
+                    console.WriteLine("Resposta de autenticação na API de Backup não obtida. Encerrando execução...");
+                    return Constants.OK;
+                }
+
+                var profileResult = await _apiClient.GetProfile(userNameParam.Valor, loginResult.SessionKey);
+
+                if (profileResult == null)
+                {
+                    console.WriteLine("Resposta do Profile não obtido. Encerrando execução...");
+                    return Constants.OK;
+                }
+
+                var destination = profileResult.Destinations.FirstOrDefault(x => x.Value.Description == Destination);
+                var source = profileResult.Sources.FirstOrDefault(x => x.Value.Description == Source);
+                var device = profileResult.Devices.FirstOrDefault(x => x.Value.FriendlyName == Device);
+
+                console.WriteLine($"Executando backup do bucket \"{destination.Key}\" da fonte \"{source.Key}\" através do dispositivo \"{device.Key}\"...");
             }
 
-            return Task.FromResult(Constants.OK);
+            return Constants.OK;
         }
     }
 }
