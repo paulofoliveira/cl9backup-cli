@@ -1,9 +1,9 @@
 ﻿namespace Cl9Backup.CLI.Domain.Entities
 {
-    public class Login
+    public class Credencial
     {
-        public Login() { }
-        public Login(string nome, string email, string senha)
+        public Credencial() { }
+        public Credencial(string nome, string email, string senha)
         {
             Nome = nome;
             Email = email;
@@ -13,7 +13,6 @@
         public string Nome { get; set; } = default!;
         public string Email { get; set; } = default!;
         public string Senha { get; set; } = default!;
-
         public override string ToString() => $"{Id} - {Nome} - {Email}";
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Cl9Backup.CLI.Domain.Persistence
 {
-    public interface ILoginRepository : IRepository<Login>
+    public interface ICredencialRepository : IRepository<Credencial>
     {
         bool ExistByName(string name);
     }

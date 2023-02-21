@@ -4,10 +4,10 @@ using LiteDB;
 
 namespace Cl9Backup.CLI.Infrastructure.Persistence
 {
-    internal class LoginRepository : Repository<Login>, ILoginRepository
+    internal class CredencialRepository : Repository<Credencial>, ICredencialRepository
     {
-        private const string COLLECTION_NAME = "logins";
-        public LoginRepository(LiteDatabase db) : base(db, COLLECTION_NAME)
+        private const string COLLECTION_NAME = "credentials";
+        public CredencialRepository(LiteDatabase db) : base(db, COLLECTION_NAME)
         {
         }
 

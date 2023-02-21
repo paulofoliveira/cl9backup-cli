@@ -8,10 +8,10 @@ namespace Cl9Backup.CLI
     [HelpOption(Description = "Mostra informações de ajuda")]
     public class CliCommands
     {
-        private readonly ILoginRepository _loginRepository;
-        public CliCommands(ILoginRepository loginRepository)
+        private readonly ICredencialRepository _credencialRepository;
+        public CliCommands(ICredencialRepository credencialRepository)
         {
-            _loginRepository = loginRepository;
+            _credencialRepository = credencialRepository;
         }
 
         [Option("-l|--login:[<COMMAND>]", CommandOptionType.SingleOrNoValue, Description = "Gerencia credenciais para execução do processo de Login nas chamadas da API", ShowInHelpText = true)]
@@ -22,15 +22,15 @@ namespace Cl9Backup.CLI
             {
                 if (string.IsNullOrEmpty(Login.Command) || Login.Command.Equals(Constants.Commands.Logins.List))
                 {
-                    console.WriteTitle("Listar Logins Cadastrados");
+                    console.WriteTitle("Listar Credenciais Cadastradas");
 
-                    var logins = _loginRepository.GetAll();
+                    var credenciais = _credencialRepository.GetAll();
 
-                    if (!logins.Any())
-                        console.WriteLine("Logins não encontrados!");
+                    if (!credenciais.Any())
+                        console.WriteLine("Credenciais não encontradas!");
                     else
-                        foreach (var item in logins.Select((login, index) => new { index, login }))
-                            console.WriteLine($"{item.index} - {item.login.Email}");
+                        foreach (var item in credenciais.Select((credencial, index) => new { index, credencial }))
+                            console.WriteLine($"{item.index} - {item.credencial.Nome} - {item.credencial.Email}");
 
                     return Task.FromResult(Constants.OK);
                 }
@@ -40,7 +40,7 @@ namespace Cl9Backup.CLI
                     var email = string.Empty;
                     var senha = string.Empty;
 
-                    console.WriteTitle("Credenciais do CL9 Backup");
+                    console.WriteTitle("Adicionar Credencial no CL9 Backup");
 
                     while (string.IsNullOrEmpty(nome))
                     {
@@ -50,9 +50,9 @@ namespace Cl9Backup.CLI
                             console.WriteLine($"O campo Nome é obrigatório.");
                         else
                         {
-                            if (_loginRepository.ExistByName(nome))
+                            if (_credencialRepository.ExistByName(nome))
                             {
-                                console.WriteLine($"O campo Nome já foi cadastrado em outro login. Tente com outro Nome.");
+                                console.WriteLine($"O campo Nome já foi cadastrado em outra credencial. Tente com outro Nome.");
                                 nome = string.Empty;
                             }
                         }
@@ -74,12 +74,12 @@ namespace Cl9Backup.CLI
                             console.WriteLine($"O campo Senha é obrigatório.");
                     }
 
-                    var login = new Login(nome, email, senha);
+                    var login = new Credencial(nome, email, senha);
                     console.WriteLine($"Armazenando credenciais para \"{login.Nome}\"...");
 
-                    _loginRepository.Add(login);
+                    _credencialRepository.Add(login);
 
-                    console.WriteLine($"Credencial para \"{login.Nome}\" armazenada!");
+                    console.WriteLine($"Credencial \"{login.Nome}\" armazenada!");
 
                     return Task.FromResult(Constants.OK);
                 }
