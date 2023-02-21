@@ -13,5 +13,6 @@ namespace Cl9Backup.CLI.Infrastructure.Persistence
         // TODO: Ser específico e considerar a quantidade de parâmetros necessários.
         public bool IsConfigured() => GetAll().Any();
         public int ClearCollection() => Collection.DeleteAll();
+        public Parametro GetByName(string name) => Collection.Query().Where(x => x.Nome == name).SingleOrDefault();
     }
 }

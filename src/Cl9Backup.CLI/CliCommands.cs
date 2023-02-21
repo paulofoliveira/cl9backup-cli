@@ -68,6 +68,24 @@ namespace Cl9Backup.CLI
                         console.WriteLine($"O campo Senha é obrigatório.");
                 }
 
+                var destinationParam = default(Parametro);
+                var enterWithDestination = Prompt.GetYesNo("Registrar valor padrão para Destino?", false);
+
+                if (enterWithDestination)
+                {
+                    var destinationInput = string.Empty;
+
+                    while (string.IsNullOrEmpty(destinationInput))
+                    {
+                        destinationInput = Prompt.GetString("Destino:");
+
+                        if (string.IsNullOrEmpty(destinationInput))
+                            console.WriteLine($"O campo Destino é obrigatório.");
+                    }
+
+                    destinationParam = new Parametro() { Nome = "DEFAULT_DESTINATION", Valor = destinationInput };
+                }
+
                 if (isConfigured)
                 {
                     console.WriteLine("Limpando parâmetros antigos...");
@@ -80,7 +98,12 @@ namespace Cl9Backup.CLI
                 _parametroRepository.Add(new Parametro() { Nome = "LOGIN", Valor = login });
                 _parametroRepository.Add(new Parametro() { Nome = "PASSWORD", Valor = senha });
 
-                console.WriteLine($"Configurações armazenadas!");
+                if (destinationParam != null)
+                {
+                    _parametroRepository.Add(destinationParam);
+                }
+
+                console.WriteLine($"Configurações persitidas com sucesso!");
 
                 return Task.FromResult(Constants.OK);
             }
@@ -88,6 +111,12 @@ namespace Cl9Backup.CLI
             if (Backup)
             {
                 console.WriteTitle("Execução de Backup do CL9 Backup");
+
+                if (string.IsNullOrEmpty(Destination))
+                {
+                    var destinationParam = _parametroRepository.GetByName("DEFAULT_DESTINATION");
+                    Destination = destinationParam.Valor ?? string.Empty;
+                }
 
                 while (string.IsNullOrEmpty(Destination))
                 {
@@ -113,7 +142,7 @@ namespace Cl9Backup.CLI
                 // TODO: Autenticar na API para obtenção da SessionKey.
                 // TODO: Chamar endpoint GetProfileAndHash para recuperar valores de Destination, Source e Device.
 
-                console.WriteLine($"Executando backup para {Destination} da fonte {Source} através do dispositivo {Device}...");
+                console.WriteLine($"Executando backup do bucket \"{Destination}\" da fonte \"{Source}\" através do dispositivo \"{Device}\"...");
             }
 
             return Task.FromResult(Constants.OK);
