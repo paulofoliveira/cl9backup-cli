@@ -12,7 +12,7 @@ namespace Cl9Backup.CLI
         {
             var services = new ServiceCollection()
                                 .AddSingleton(c => new LiteDatabase(Constants.DATABASE_NAME))
-                                .AddSingleton<ICredencialRepository, CredencialRepository>()
+                                .AddSingleton<IParametroRepository, ParametroRepository>()
                                 .AddSingleton(PhysicalConsole.Singleton)
                                 .BuildServiceProvider();
 

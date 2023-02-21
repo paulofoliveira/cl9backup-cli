@@ -8,86 +8,60 @@ namespace Cl9Backup.CLI
     [HelpOption(Description = "Mostra informações de ajuda")]
     public class CliCommands
     {
-        private readonly ICredencialRepository _credencialRepository;
-        public CliCommands(ICredencialRepository credencialRepository)
+        private readonly IParametroRepository _parametroRepository;
+        public CliCommands(IParametroRepository parametroRepository)
         {
-            _credencialRepository = credencialRepository;
+            _parametroRepository = parametroRepository;
         }
 
-        [Option("-l|--login:[<COMMAND>]", CommandOptionType.SingleOrNoValue, Description = "Gerencia credenciais para execução do processo de Login nas chamadas da API", ShowInHelpText = true)]
-        public (bool HasValue, string Command) Login { get; set; } = (false, Constants.Commands.Logins.List);
+        [Option("-c|--config", CommandOptionType.NoValue, Description = "Realiza as configurações necessárias para execuções de Backup/Restore", ShowInHelpText = true)]
+        public bool Config { get; set; }
+
         public Task<int> OnExecute(CommandLineApplication app, IConsole console)
         {
-            if (Login.HasValue)
+            if (!_parametroRepository.IsConfigured() || Config)
             {
-                if (string.IsNullOrEmpty(Login.Command) || Login.Command.Equals(Constants.Commands.Logins.List))
+                var apiHost = string.Empty;
+                var login = string.Empty;
+                var senha = string.Empty;
+
+                console.WriteTitle("Configurar no CL9 Backup");
+
+                while (string.IsNullOrEmpty(apiHost))
                 {
-                    console.WriteTitle("Listar Credenciais Cadastradas");
+                    // TODO: Puxar defaultValue do appsettings.json
 
-                    var credenciais = _credencialRepository.GetAll();
+                    apiHost = Prompt.GetString("Api HOST:", "https://localhost:44376/");
 
-                    if (!credenciais.Any())
-                        console.WriteLine("Credenciais não encontradas!");
-                    else
-                        foreach (var item in credenciais.Select((credencial, index) => new { index, credencial }))
-                            console.WriteLine($"{item.index} - {item.credencial.Nome} - {item.credencial.Email}");
-
-                    return Task.FromResult(Constants.OK);
+                    if (string.IsNullOrEmpty(apiHost))
+                        console.WriteLine($"O campo Api HOST é obrigatório.");
                 }
-                else if (Login.Command.Equals(Constants.Commands.Logins.Add))
+
+                while (string.IsNullOrEmpty(login))
                 {
-                    var nome = string.Empty;
-                    var email = string.Empty;
-                    var senha = string.Empty;
+                    login = Prompt.GetString("Login:");
 
-                    console.WriteTitle("Adicionar Credencial no CL9 Backup");
-
-                    while (string.IsNullOrEmpty(nome))
-                    {
-                        nome = Prompt.GetString("Nome:");
-
-                        if (string.IsNullOrEmpty(nome))
-                            console.WriteLine($"O campo Nome é obrigatório.");
-                        else
-                        {
-                            if (_credencialRepository.ExistByName(nome))
-                            {
-                                console.WriteLine($"O campo Nome já foi cadastrado em outra credencial. Tente com outro Nome.");
-                                nome = string.Empty;
-                            }
-                        }
-                    }
-
-                    while (string.IsNullOrEmpty(email))
-                    {
-                        email = Prompt.GetString("Email:");
-
-                        if (string.IsNullOrEmpty(email))
-                            console.WriteLine($"O campo Email é obrigatório.");
-                    }
-
-                    while (string.IsNullOrEmpty(senha))
-                    {
-                        senha = Prompt.GetPassword("Senha:");
-
-                        if (string.IsNullOrEmpty(senha))
-                            console.WriteLine($"O campo Senha é obrigatório.");
-                    }
-
-                    var login = new Credencial(nome, email, senha);
-                    console.WriteLine($"Armazenando credenciais para \"{login.Nome}\"...");
-
-                    _credencialRepository.Add(login);
-
-                    console.WriteLine($"Credencial \"{login.Nome}\" armazenada!");
-
-                    return Task.FromResult(Constants.OK);
+                    if (string.IsNullOrEmpty(login))
+                        console.WriteLine($"O campo Login é obrigatório.");
                 }
-                else
+
+                while (string.IsNullOrEmpty(senha))
                 {
-                    console.WriteLine("Nenhum comando foi encontrado para --login. Verifique a documentação.");
-                    return Task.FromResult(Constants.OK);
+                    senha = Prompt.GetPassword("Senha:");
+
+                    if (string.IsNullOrEmpty(senha))
+                        console.WriteLine($"O campo Senha é obrigatório.");
                 }
+
+                console.WriteLine($"Armazenando configurações de CL9 Backup...");
+
+                _parametroRepository.Add(new Parametro() { Nome = "API_HOST", Valor = apiHost });
+                _parametroRepository.Add(new Parametro() { Nome = "LOGIN", Valor = login });
+                _parametroRepository.Add(new Parametro() { Nome = "PASSWORD", Valor = senha });
+
+                console.WriteLine($"Configurações armazenadas!");
+
+                return Task.FromResult(Constants.OK);
             }
 
             return Task.FromResult(Constants.OK);
