@@ -38,7 +38,7 @@ namespace Cl9Backup.CLI
                 {
                     var nome = string.Empty;
                     var email = string.Empty;
-                    var password = string.Empty;
+                    var senha = string.Empty;
 
                     console.WriteTitle("Credenciais do CL9 Backup");
 
@@ -66,15 +66,15 @@ namespace Cl9Backup.CLI
                             console.WriteLine($"O campo Email é obrigatório.");
                     }
 
-                    while (string.IsNullOrEmpty(password))
+                    while (string.IsNullOrEmpty(senha))
                     {
-                        password = Prompt.GetPassword("Senha:");
+                        senha = Prompt.GetPassword("Senha:");
 
-                        if (string.IsNullOrEmpty(password))
+                        if (string.IsNullOrEmpty(senha))
                             console.WriteLine($"O campo Senha é obrigatório.");
                     }
 
-                    var login = new Login(nome, email, password);
+                    var login = new Login(nome, email, senha);
                     console.WriteLine($"Armazenando credenciais para \"{login.Nome}\"...");
 
                     _loginRepository.Add(login);
