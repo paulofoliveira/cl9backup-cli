@@ -349,3 +349,5 @@ MigrationBackup/
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
 /src/Cl9Backup.CLI/Properties/launchSettings.json
+/src/Cl9Backup.CLI.FakeApi/appsettings.Development.json
+/src/Cl9Backup.CLI.FakeApi/Properties/launchSettings.json

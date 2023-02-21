@@ -1,0 +1,46 @@
+{
+  "Destinations": {
+    "1ab31675-09da-4cae-bd9c-be21bd5eeeac": {
+      "Description": "Bucket Teste"
+    }
+  },
+  "Sources": {
+    "4d210b3f-3a2a-4754-808a-5fbe8046af5c": {
+      "Engine": "engine1/file",
+      "Description": "Backup #1"
+    },
+    "64f5950b-c204-40dd-866d-fcacc28b9287": {
+      "Engine": "engine1/file",
+      "Description": "Backup #2"
+    },
+    "a2800bb6-4357-4017-adf0-2bcb090a1b34": {
+      "Engine": "engine1/file",
+      "Description": "Backup #3"
+    },
+    "47ca5007-5331-4909-894d-6840412efcfc": {
+      "Engine": "engine1/file",
+      "Description": "Backup #4"
+    },
+    "58a73860-3ed1-4db1-83d4-a946e1e498f9": {
+      "Engine": "engine1/file",
+      "Description": "Backup #5"
+    }
+  },
+  "Devices": {
+    "e9ede461-ab41-45d2-9f45-e521acd45b97": {
+      "FriendlyName": "WEB01"
+    },
+    "3e1a8783-c107-403d-b076-9bbc076cc142": {
+      "FriendlyName": "WEB02"
+    },
+    "f97f7dce-4f9f-4c39-bb63-5abd55c0e525": {
+      "FriendlyName": "DB01"
+    },
+    "e833b022-965a-4750-b691-881e8a069472": {
+      "FriendlyName": "DB02"
+    },
+    "aa81ce3b-ae50-4f60-8675-5cac4faaba90": {
+      "FriendlyName": "DB03"
+    }
+  }
+}
