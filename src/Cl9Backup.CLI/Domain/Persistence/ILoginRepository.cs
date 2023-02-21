@@ -4,5 +4,6 @@ namespace Cl9Backup.CLI.Domain.Persistence
 {
     public interface ILoginRepository : IRepository<Login>
     {
+        bool ExistByName(string name);
     }
 }

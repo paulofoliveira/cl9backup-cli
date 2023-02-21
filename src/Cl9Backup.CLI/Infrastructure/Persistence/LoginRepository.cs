@@ -10,5 +10,7 @@ namespace Cl9Backup.CLI.Infrastructure.Persistence
         public LoginRepository(LiteDatabase db) : base(db, COLLECTION_NAME)
         {
         }
+
+        public bool ExistByName(string name) => Collection.Exists(x => x.Nome == name);
     }
 }
