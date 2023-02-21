@@ -166,6 +166,8 @@ namespace Cl9Backup.CLI
                 var source = profileResult.Sources.FirstOrDefault(x => x.Value.Description == Source);
                 var device = profileResult.Devices.FirstOrDefault(x => x.Value.FriendlyName == Device);
 
+
+
                 console.WriteLine($"Executando backup do bucket \"{destination.Key}\" da fonte \"{source.Key}\" através do dispositivo \"{device.Key}\"...");
             }
 
