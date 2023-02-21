@@ -1,3 +1,4 @@
+using Cl9Backup.CLI.FakeApi;
 using Cl9Backup.CLI.FakeApi.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +10,7 @@ builder.Services.AddControllers()
     });
 
 builder.Services.AddScoped<UserProfileRepository>();
+builder.Services.AddScoped<SessionKeyGenerator>();
 
 var app = builder.Build();
 
