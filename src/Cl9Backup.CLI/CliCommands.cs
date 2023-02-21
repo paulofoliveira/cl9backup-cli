@@ -1,6 +1,7 @@
 ﻿using Cl9Backup.CLI.Domain.Entities;
 using Cl9Backup.CLI.Domain.Persistence;
 using McMaster.Extensions.CommandLineUtils;
+using Microsoft.Extensions.Configuration;
 
 namespace Cl9Backup.CLI
 {
@@ -8,9 +9,11 @@ namespace Cl9Backup.CLI
     [HelpOption(Description = "Mostra informações de ajuda")]
     public class CliCommands
     {
+        private readonly IConfiguration _configuration;
         private readonly IParametroRepository _parametroRepository;
-        public CliCommands(IParametroRepository parametroRepository)
+        public CliCommands(IConfiguration configuration, IParametroRepository parametroRepository)
         {
+            _configuration = configuration;
             _parametroRepository = parametroRepository;
         }
 
@@ -31,9 +34,7 @@ namespace Cl9Backup.CLI
 
                 while (string.IsNullOrEmpty(apiHost))
                 {
-                    // TODO: Puxar defaultValue do appsettings.json
-
-                    apiHost = Prompt.GetString("Api HOST:", "https://localhost:44376/");
+                    apiHost = Prompt.GetString("Api HOST:", _configuration["DefaultApiHost"]);
 
                     if (string.IsNullOrEmpty(apiHost))
                         console.WriteLine($"O campo Api HOST é obrigatório.");
