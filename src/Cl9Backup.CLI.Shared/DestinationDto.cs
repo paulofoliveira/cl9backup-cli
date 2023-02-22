@@ -1,4 +1,4 @@
-﻿namespace Cl9Backup.CLI.FakeApi.Models
+﻿namespace Cl9Backup.CLI.Shared
 {
     public class DestinationDto
     {

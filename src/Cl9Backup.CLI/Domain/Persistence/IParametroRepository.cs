@@ -6,5 +6,6 @@ namespace Cl9Backup.CLI.Domain.Persistence
     {
         bool IsConfigured();
         int ClearCollection();
+        Parametro GetByName(string name);
     }
 }

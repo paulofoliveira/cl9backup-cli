@@ -1,9 +1,11 @@
 ﻿using Cl9Backup.CLI.Domain.Persistence;
+using Cl9Backup.CLI.Infrastructure.Api;
 using Cl9Backup.CLI.Infrastructure.Persistence;
 using LiteDB;
 using McMaster.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Text.Json;
 
 namespace Cl9Backup.CLI
 {
@@ -22,12 +24,22 @@ namespace Cl9Backup.CLI
                                 .AddSingleton<IParametroRepository, ParametroRepository>()
                                 .AddSingleton(PhysicalConsole.Singleton)
                                 .AddSingleton(configuration)
-                                .BuildServiceProvider();
+                                .AddSingleton(new JsonSerializerOptions() { PropertyNamingPolicy = null });
+
+            services.AddHttpClient<Cl9BackupApiClient>((sp, client) =>
+            {
+                var config = sp.GetRequiredService<IConfiguration>();
+                var hostUri = new Uri(config["ApiHost"]);
+                var baseAddress = new Uri(hostUri, "api/v1");
+                client.BaseAddress = baseAddress;
+            });
+
+            var serviceProvider = services.BuildServiceProvider();
 
             try
             {
                 var app = new CommandLineApplication<CliCommands>();
-                app.Conventions.UseDefaultConventions().UseConstructorInjection(services);
+                app.Conventions.UseDefaultConventions().UseConstructorInjection(serviceProvider);
                 return await app.ExecuteAsync(args);
             }
             catch (Exception ex)

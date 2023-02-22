@@ -1,4 +1,5 @@
 ﻿using Cl9Backup.CLI.FakeApi.Models;
+using Cl9Backup.CLI.Shared;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Cl9Backup.CLI.FakeApi.Controllers
@@ -34,7 +35,7 @@ namespace Cl9Backup.CLI.FakeApi.Controllers
             }
 
             var sessionKey = _keyGenerator.GenerateSessionKey();
-            var response = new LoginResponseDto() { Status = "OK", Message = string.Empty, SessionKey = sessionKey.SessionKey };
+            var response = new LoginResponseDto() { Status = 200, Message = "OK", SessionKey = sessionKey.SessionKey };
             return Ok(response);
         }
     }

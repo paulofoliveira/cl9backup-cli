@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Cl9Backup.CLI.Shared\Cl9Backup.CLI.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Update="Persistence\user-profile.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
