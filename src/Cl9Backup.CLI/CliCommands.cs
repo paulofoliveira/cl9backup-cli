@@ -166,9 +166,15 @@ namespace Cl9Backup.CLI
                 var source = profileResult.Sources.FirstOrDefault(x => x.Value.Description == Source);
                 var device = profileResult.Devices.FirstOrDefault(x => x.Value.FriendlyName == Device);
 
-
-
                 console.WriteLine($"Executando backup do bucket \"{destination.Key}\" da fonte \"{source.Key}\" através do dispositivo \"{device.Key}\"...");
+
+                var backupResult = await _apiClient.RunBackup(userNameParam.Valor, loginResult.SessionKey, destination.Key, source.Key, device.Key);
+
+                if (backupResult == null)
+                {
+                    console.WriteLine("Resposta do Backup não obtido. Encerrando execução...");
+                    return Constants.OK;
+                }
             }
 
             return Constants.OK;

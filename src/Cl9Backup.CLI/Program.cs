@@ -5,6 +5,7 @@ using LiteDB;
 using McMaster.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Text.Json;
 
 namespace Cl9Backup.CLI
 {
@@ -22,7 +23,8 @@ namespace Cl9Backup.CLI
                                 .AddSingleton(c => new LiteDatabase(Constants.DATABASE_NAME))
                                 .AddSingleton<IParametroRepository, ParametroRepository>()
                                 .AddSingleton(PhysicalConsole.Singleton)
-                                .AddSingleton(configuration);
+                                .AddSingleton(configuration)
+                                .AddSingleton(new JsonSerializerOptions() { PropertyNamingPolicy = null });
 
             services.AddHttpClient<Cl9BackupApiClient>((sp, client) =>
             {
