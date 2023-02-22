@@ -20,6 +20,11 @@
 
 
 	<ItemGroup>
+	  <ProjectReference Include="..\Cl9Backup.CLI.Shared\Cl9Backup.CLI.Shared.csproj" />
+	</ItemGroup>
+
+
+	<ItemGroup>
 	  <None Update="appsettings.Development.json">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
@@ -29,6 +34,11 @@
 	  <None Update="appsettings.Production.json">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
+	</ItemGroup>
+
+
+	<ItemGroup>
+	  <Folder Include="Models\" />
 	</ItemGroup>
 
 </Project>

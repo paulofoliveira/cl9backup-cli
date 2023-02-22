@@ -154,6 +154,8 @@ namespace Cl9Backup.CLI
                     return Constants.OK;
                 }
 
+                console.WriteLine($"Resposta Login: {loginResult.Status} - {loginResult.Message}");
+
                 var profileResult = await _apiClient.GetProfile(userNameParam.Valor, loginResult.SessionKey);
 
                 if (profileResult == null)
@@ -162,11 +164,11 @@ namespace Cl9Backup.CLI
                     return Constants.OK;
                 }
 
+                console.WriteLine($"Resposta Profile: {profileResult.Status} - {profileResult.Message}");
+
                 var destination = profileResult.Destinations.FirstOrDefault(x => x.Value.Description == Destination);
                 var source = profileResult.Sources.FirstOrDefault(x => x.Value.Description == Source);
                 var device = profileResult.Devices.FirstOrDefault(x => x.Value.FriendlyName == Device);
-
-                console.WriteLine($"Executando backup do bucket \"{destination.Key}\" da fonte \"{source.Key}\" através do dispositivo \"{device.Key}\"...");
 
                 var backupResult = await _apiClient.RunBackup(userNameParam.Valor, loginResult.SessionKey, destination.Key, source.Key, device.Key);
 
@@ -175,6 +177,8 @@ namespace Cl9Backup.CLI
                     console.WriteLine("Resposta do Backup não obtido. Encerrando execução...");
                     return Constants.OK;
                 }
+
+                console.WriteLine($"Resposta Backup: {backupResult.Status} - {backupResult.Message}");
             }
 
             return Constants.OK;

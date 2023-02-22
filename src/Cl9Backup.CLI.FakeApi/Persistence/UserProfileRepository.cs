@@ -1,21 +1,29 @@
-﻿using Cl9Backup.CLI.FakeApi.Models;
+﻿using Cl9Backup.CLI.Shared;
 using System.Text.Json;
 
 namespace Cl9Backup.CLI.FakeApi.Persistence
 {
     public class UserProfileRepository
     {
-        public UserProfileDto? GetUserProfile(string userName)
+        public ProfileResponseDto? GetUserProfile(string userName)
         {
             if (string.IsNullOrEmpty(userName))
                 return default;
 
-            var jsonUserProfile = File.ReadAllText("Persistence/user-profile.json");
+            var jsonProfile = File.ReadAllText("Persistence/user-profile.json");
 
-            if (string.IsNullOrEmpty(jsonUserProfile))
+            if (string.IsNullOrEmpty(jsonProfile))
                 return default;
 
-            return JsonSerializer.Deserialize<UserProfileDto>(jsonUserProfile);
+            var dto = JsonSerializer.Deserialize<ProfileResponseDto>(jsonProfile);
+
+            if (dto == null)
+                return default;
+
+            dto.Status = 200;
+            dto.Message = "OK";
+
+            return dto;
         }
     }
 }

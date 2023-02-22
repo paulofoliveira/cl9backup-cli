@@ -1,5 +1,6 @@
 ﻿using Cl9Backup.CLI.FakeApi.Models;
 using Cl9Backup.CLI.FakeApi.Persistence;
+using Cl9Backup.CLI.Shared;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Cl9Backup.CLI.FakeApi.Controllers
@@ -17,7 +18,7 @@ namespace Cl9Backup.CLI.FakeApi.Controllers
         public async Task<IActionResult> RunBackup([FromForm] RunBackupRequestDto request)
         {
             await Task.Delay(1000);
-            return Ok(new RunBackupResponseDto() { Status = "OK", Message = "Backup iniciado com sucesso" });
+            return Ok(new RunBackupResponseDto() { Status = 200, Message = "Successfully dispatched the instruction." });
         }
     }
 }
